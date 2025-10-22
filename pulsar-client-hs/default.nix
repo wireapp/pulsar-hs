@@ -1,4 +1,4 @@
-{ nixpkgs ? import ./nixpkgs.nix {}, compiler ? "ghc8107" }:
+{ nixpkgs ? import ./nixpkgs.nix {}, compiler ? "ghc98" }:
 let
   pulsar-client-cpp = nixpkgs.callPackage ./native { };
 in

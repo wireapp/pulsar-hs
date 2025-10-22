@@ -5,25 +5,22 @@
 , fetchurl
 , version ? "2.8.1"
 , sha512 ? "23i95k6gs5lh6gw6v6hybv6z8rfzc3mfgj2agb6iicad9ia2sf46wr3rqzi9bdhp0c990vcvn72bkz13i0hnh1hj5gnwqin339a2g0x"
-, boost17x
-, clang
-, llvmPackages
+, boost177
 , cmake
 , curl
-, gcc
 , jsoncpp
 , log4cxx
 , openssl
-, pkgconfig
-, protobuf
-, python37
+, pkgconf
+, protobuf_26
+, python3
 , snappy
 , zlib
 , zstd}:
 
 let
   # Not really sure why I need to do this.. If I call clang-tools without the override it defaults to clang_10
-  clang-tools = pkgs.clang-tools.override {inherit stdenv llvmPackages;};
+  clang-tools = pkgs.clang-tools_19;
 in
   stdenv.mkDerivation rec {
     pname = "pulsar-client-cpp";
@@ -38,11 +35,9 @@ in
 
     # python37 used in cmake script to calculate some values
     # clang-tools needed for clang-format etc
-    nativeBuildInputs = [ cmake python37 pkgconfig ]
-    ++ lib.optional stdenv.isDarwin [ clang clang-tools ]
-    ++ lib.optional stdenv.isLinux [ gcc clang-tools ];
+    nativeBuildInputs = [ cmake python3 pkgconf clang-tools ];
 
-    buildInputs = [ boost17x jsoncpp log4cxx openssl protobuf snappy zstd curl zlib ];
+    buildInputs = [ boost177 jsoncpp log4cxx openssl protobuf_26 snappy zstd curl zlib ];
 
     # since we cant expand $out in cmakeFlags
     preConfigure = ''cmakeFlags="$cmakeFlags -DCMAKE_INSTALL_LIBDIR=$out/lib"'';
@@ -55,7 +50,7 @@ in
 
     enableParallelBuilding = true;
 
-    patches = [ ./reader_configuration_includes.diff ];
+    patches = [ ./reader_configuration_includes.diff ./c++-17.diff ];
 
     meta = with lib; {
       homepage = "https://pulsar.apache.org/docs/en/client-libraries-cpp";

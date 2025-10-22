@@ -1,11 +1,11 @@
-{ compiler ? "ghc8106" }:
+{ compiler ? "ghc98" }:
 
 let
   pkgs = import (
     builtins.fetchTarball {
-      name   = "nixos-unstable-2021-09-03";
-      url    = "https://github.com/NixOS/nixpkgs/archive/8a2ec31e224de9461390cdd03e5e0b0290cdad0b.tar.gz";
-      sha256 = "0w8sl1dwmvng2bd03byiaz8j9a9hlvv8n16641m8m5dd06dyqli7";
+      name   = "nixos-25.05";
+      url    = "https://github.com/NixOS/nixpkgs/archive/a493e93b4a259cd9fea8073f89a7ed9b1c5a1da2.tar.gz";
+      sha256 = "sha256:1pwnjxh0964w60g881da5gmpal42w2ikfccm1ng9hnb1w9i8vgsd";
     }
   ) {};
 
