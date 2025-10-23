@@ -20,16 +20,19 @@
 #pragma once
 
 #include "client_configuration.h"
+#include "consumer.h"
+#include "consumer_configuration.h"
 #include "message.h"
 #include "message_id.h"
 #include "producer.h"
-#include "consumer.h"
-#include "reader.h"
-#include "consumer_configuration.h"
 #include "producer_configuration.h"
+#include "reader.h"
 #include "reader_configuration.h"
 #include "result.h"
 #include "string_list.h"
+#include "table_view.h"
+#include "table_view_configuration.h"
+#include <pulsar/defines.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -46,6 +49,7 @@ typedef void (*pulsar_create_producer_callback)(pulsar_result result, pulsar_pro
 
 typedef void (*pulsar_subscribe_callback)(pulsar_result result, pulsar_consumer_t *consumer, void *ctx);
 typedef void (*pulsar_reader_callback)(pulsar_result result, pulsar_reader_t *reader, void *ctx);
+typedef void (*pulsar_table_view_callback)(pulsar_result result, pulsar_table_view_t *tableView, void *ctx);
 typedef void (*pulsar_get_partitions_callback)(pulsar_result result, pulsar_string_list_t *partitions,
                                                void *ctx);
 
@@ -58,7 +62,7 @@ typedef void (*pulsar_close_callback)(pulsar_result result, void *ctx);
  * @param serviceUrl the Pulsar endpoint to use (eg: pulsar://broker-example.com:6650)
  * @param clientConfiguration the client configuration to use
  */
-pulsar_client_t *pulsar_client_create(const char *serviceUrl,
+PULSAR_PUBLIC pulsar_client_t *pulsar_client_create(const char *serviceUrl,
                                                     const pulsar_client_configuration_t *clientConfiguration);
 
 /**
@@ -71,40 +75,64 @@ pulsar_client_t *pulsar_client_create(const char *serviceUrl,
  * @return ResultOk if the producer has been successfully created
  * @return ResultError if there was an error
  */
-pulsar_result pulsar_client_create_producer(pulsar_client_t *client, const char *topic,
+PULSAR_PUBLIC pulsar_result pulsar_client_create_producer(pulsar_client_t *client, const char *topic,
                                                           const pulsar_producer_configuration_t *conf,
                                                           pulsar_producer_t **producer);
 
-void pulsar_client_create_producer_async(pulsar_client_t *client, const char *topic,
+PULSAR_PUBLIC void pulsar_client_create_producer_async(pulsar_client_t *client, const char *topic,
                                                        const pulsar_producer_configuration_t *conf,
                                                        pulsar_create_producer_callback callback, void *ctx);
 
-pulsar_result pulsar_client_subscribe(pulsar_client_t *client, const char *topic,
+PULSAR_PUBLIC pulsar_result pulsar_client_subscribe(pulsar_client_t *client, const char *topic,
                                                     const char *subscriptionName,
                                                     const pulsar_consumer_configuration_t *conf,
                                                     pulsar_consumer_t **consumer);
 
-void pulsar_client_subscribe_async(pulsar_client_t *client, const char *topic,
+PULSAR_PUBLIC void pulsar_client_subscribe_async(pulsar_client_t *client, const char *topic,
                                                  const char *subscriptionName,
                                                  const pulsar_consumer_configuration_t *conf,
                                                  pulsar_subscribe_callback callback, void *ctx);
 
-pulsar_result pulsar_client_subscribe_multi_topics(pulsar_client_t *client, const char **topics,
-                                                                 int topicsCount, const char *subscriptionName,
+/**
+ * Create a consumer to multiple topics under the same namespace with default configuration
+ *
+ * @see subscribe(const std::vector<std::string>&, const std::string&, Consumer& consumer)
+ *
+ * @param topics a list of topic names to subscribe to
+ * @param topicsCount the number of topics
+ * @param subscriptionName the subscription name
+ * @param consumer a non-const reference where the new consumer will be copied
+ * @return ResultOk if the consumer has been successfully created
+ * @return ResultError if there was an error
+ */
+PULSAR_PUBLIC pulsar_result pulsar_client_subscribe_multi_topics(pulsar_client_t *client, const char **topics,
+                                                                 int topicsCount,
+                                                                 const char *subscriptionName,
                                                                  const pulsar_consumer_configuration_t *conf,
                                                                  pulsar_consumer_t **consumer);
 
-void pulsar_client_subscribe_multi_topics_async(pulsar_client_t *client, const char **topics,
+PULSAR_PUBLIC void pulsar_client_subscribe_multi_topics_async(pulsar_client_t *client, const char **topics,
                                                               int topicsCount, const char *subscriptionName,
                                                               const pulsar_consumer_configuration_t *conf,
                                                               pulsar_subscribe_callback callback, void *ctx);
 
-pulsar_result pulsar_client_subscribe_pattern(pulsar_client_t *client, const char *topicPattern,
+/**
+ * Create a consumer to multiple (which match given topicPattern) with default configuration
+ *
+ * @see subscribeWithRegex(const std::string&, const std::string&, Consumer& consumer)
+ *
+ * @param topicPattern topic regex topics should match to subscribe to
+ * @param subscriptionName the subscription name
+ * @param consumer a non-const reference where the new consumer will be copied
+ * @return ResultOk if the consumer has been successfully created
+ * @return ResultError if there was an error
+ */
+PULSAR_PUBLIC pulsar_result pulsar_client_subscribe_pattern(pulsar_client_t *client, const char *topicPattern,
                                                             const char *subscriptionName,
                                                             const pulsar_consumer_configuration_t *conf,
                                                             pulsar_consumer_t **consumer);
 
-void pulsar_client_subscribe_pattern_async(pulsar_client_t *client, const char *topicPattern,
+PULSAR_PUBLIC void pulsar_client_subscribe_pattern_async(pulsar_client_t *client, const char *topicPattern,
                                                          const char *subscriptionName,
                                                          const pulsar_consumer_configuration_t *conf,
                                                          pulsar_subscribe_callback callback, void *ctx);
@@ -138,29 +166,77 @@ void pulsar_client_subscribe_pattern_async(pulsar_client_t *client, const char *
  *            The {@code ReaderConfiguration} object
  * @return The {@code Reader} object
  */
-pulsar_result pulsar_client_create_reader(pulsar_client_t *client, const char *topic,
+PULSAR_PUBLIC pulsar_result pulsar_client_create_reader(pulsar_client_t *client, const char *topic,
                                                         const pulsar_message_id_t *startMessageId,
                                                         pulsar_reader_configuration_t *conf,
                                                         pulsar_reader_t **reader);
 
-void pulsar_client_create_reader_async(pulsar_client_t *client, const char *topic,
+PULSAR_PUBLIC void pulsar_client_create_reader_async(pulsar_client_t *client, const char *topic,
                                                      const pulsar_message_id_t *startMessageId,
                                                      pulsar_reader_configuration_t *conf,
                                                      pulsar_reader_callback callback, void *ctx);
+/**
+ * Create a table view with given {@code table_view_configuration} for specified topic.
+ *
+ * The TableView provides a key-value map view of a compacted topic. Messages without keys will
+ * be ignored.
+ *
+ * NOTE:
+ * When the result in the callback is `ResultOk`, `*c_tableView` will point to the memory that
+ * is allocated internally. You have to call `pulsar_table_view_free` to free it.
+ *
+ * Example:
+ * ```c
+ * pulsar_table_view_configuration_t *table_view_conf = pulsar_table_view_configuration_create();
+ * pulsar_table_view_configuration_set_subscription_name(table_view_conf, sub_name);
+ * pulsar_table_view_t *table_view;
+ * pulsar_result result = pulsar_client_create_table_view(client, topic_name, table_view_conf, &table_view);
+ *
+ * // do something...
+ *
+ * pulsar_table_view_close(table_view);
+ * pulsar_table_view_free(table_view);
+ * pulsar_table_view_configuration_free(table_view_conf);
+ *
+ * ```
+ *
+ * @param topic The name of the topic.
+ * @param conf The {@code table_view_configuration} pointer.
+ * @param c_tableView The pointer of the table_view pointer
+ * @return Returned when the table_view is successfully linked to the topic and the map is built from a
+ * message that already exists.
+ */
+PULSAR_PUBLIC pulsar_result pulsar_client_create_table_view(pulsar_client_t *client, const char *topic,
+                                                            pulsar_table_view_configuration_t *conf,
+                                                            pulsar_table_view_t **c_tableView);
 
-pulsar_result pulsar_client_get_topic_partitions(pulsar_client_t *client, const char *topic,
+/**
+ * Async Create a table view with given {@code table_view_configuration} for specified topic.
+ * @param topic The name of the topic.
+ * @param conf The {@code table_view_configuration} pointer.
+ * @param callback
+ * 1. When the result in the callback is `ResultOk`, `tableView` in the callback will point to the memory that
+ * is allocated internally. You have to call `pulsar_table_view_free` to free it.
+ * 2. If the result in the callback is not `ResultOk`, `tableView` in the callback will be nullptr.
+ * @param ctx
+ */
+PULSAR_PUBLIC void pulsar_client_create_table_view_async(pulsar_client_t *client, const char *topic,
+                                                         pulsar_table_view_configuration_t *conf,
+                                                         pulsar_table_view_callback callback, void *ctx);
+
+PULSAR_PUBLIC pulsar_result pulsar_client_get_topic_partitions(pulsar_client_t *client, const char *topic,
                                                                pulsar_string_list_t **partitions);
 
-void pulsar_client_get_topic_partitions_async(pulsar_client_t *client, const char *topic,
+PULSAR_PUBLIC void pulsar_client_get_topic_partitions_async(pulsar_client_t *client, const char *topic,
                                                             pulsar_get_partitions_callback callback,
                                                             void *ctx);
 
-pulsar_result pulsar_client_close(pulsar_client_t *client);
+PULSAR_PUBLIC pulsar_result pulsar_client_close(pulsar_client_t *client);
 
-void pulsar_client_close_async(pulsar_client_t *client, pulsar_close_callback callback,
+PULSAR_PUBLIC void pulsar_client_close_async(pulsar_client_t *client, pulsar_close_callback callback,
                                              void *ctx);
 
-void pulsar_client_free(pulsar_client_t *client);
+PULSAR_PUBLIC void pulsar_client_free(pulsar_client_t *client);
 
 #ifdef __cplusplus
 }

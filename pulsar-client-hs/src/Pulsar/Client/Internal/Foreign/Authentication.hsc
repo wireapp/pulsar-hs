@@ -13,6 +13,7 @@ import Foreign.Ptr
 #ccall pulsar_authentication_tls_create , CString -> CString -> IO (Ptr <struct _pulsar_authentication>)
 #ccall pulsar_authentication_token_create , CString -> IO (Ptr <struct _pulsar_authentication>)
 #ccall pulsar_authentication_token_create_with_supplier , <token_supplier> -> Ptr () -> IO (Ptr <struct _pulsar_authentication>)
+#ccall pulsar_authentication_basic_create , CString -> CString -> IO (Ptr <struct _pulsar_authentication>)
 #ccall pulsar_authentication_athenz_create , CString -> IO (Ptr <struct _pulsar_authentication>)
 #ccall pulsar_authentication_oauth2_create , CString -> IO (Ptr <struct _pulsar_authentication>)
 #ccall pulsar_authentication_free , Ptr <struct _pulsar_authentication> -> IO ()

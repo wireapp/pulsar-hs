@@ -25,6 +25,7 @@ import Foreign.Ptr
             pulsar_result_InvalidMessage,
             pulsar_result_ConsumerNotInitialized,
             pulsar_result_ProducerNotInitialized,
+            pulsar_result_ProducerBusy,
             pulsar_result_TooManyLookupRequestException,
             pulsar_result_InvalidTopicName,
             pulsar_result_InvalidUrl,
@@ -39,7 +40,18 @@ import Foreign.Ptr
             pulsar_result_ConsumerNotFound,
             pulsar_result_UnsupportedVersionError,
             pulsar_result_TopicTerminated,
-            pulsar_result_CryptoError
+            pulsar_result_CryptoError,
+            pulsar_result_IncompatibleSchema,
+            pulsar_result_ConsumerAssignError,
+            pulsar_result_CumulativeAcknowledgementNotAllowedError,
+            pulsar_result_TransactionCoordinatorNotFoundError,
+            pulsar_result_InvalidTxnStatusError,
+            pulsar_result_NotAllowedError,
+            pulsar_result_TransactionConflict,
+            pulsar_result_TransactionNotFound,
+            pulsar_result_ProducerFenced,
+            pulsar_result_MemoryBufferIsFull,
+            pulsar_result_Interrupted
         } pulsar_result; -}
 #integral_t pulsar_result
 #num pulsar_result_Ok
@@ -61,6 +73,7 @@ import Foreign.Ptr
 #num pulsar_result_InvalidMessage
 #num pulsar_result_ConsumerNotInitialized
 #num pulsar_result_ProducerNotInitialized
+#num pulsar_result_ProducerBusy
 #num pulsar_result_TooManyLookupRequestException
 #num pulsar_result_InvalidTopicName
 #num pulsar_result_InvalidUrl
@@ -76,4 +89,15 @@ import Foreign.Ptr
 #num pulsar_result_UnsupportedVersionError
 #num pulsar_result_TopicTerminated
 #num pulsar_result_CryptoError
+#num pulsar_result_IncompatibleSchema
+#num pulsar_result_ConsumerAssignError
+#num pulsar_result_CumulativeAcknowledgementNotAllowedError
+#num pulsar_result_TransactionCoordinatorNotFoundError
+#num pulsar_result_InvalidTxnStatusError
+#num pulsar_result_NotAllowedError
+#num pulsar_result_TransactionConflict
+#num pulsar_result_TransactionNotFound
+#num pulsar_result_ProducerFenced
+#num pulsar_result_MemoryBufferIsFull
+#num pulsar_result_Interrupted
 #ccall pulsar_result_str , <pulsar_result> -> IO CString

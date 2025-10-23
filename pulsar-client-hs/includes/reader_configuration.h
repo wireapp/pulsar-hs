@@ -19,8 +19,11 @@
 
 #pragma once
 
-#include "reader.h"
 #include "message.h"
+#include "reader.h"
+#include <pulsar/defines.h>
+
+#include "consumer_configuration.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -30,18 +33,18 @@ typedef struct _pulsar_reader_configuration pulsar_reader_configuration_t;
 
 typedef void (*pulsar_reader_listener)(pulsar_reader_t *reader, pulsar_message_t *msg, void *ctx);
 
-pulsar_reader_configuration_t *pulsar_reader_configuration_create();
+PULSAR_PUBLIC pulsar_reader_configuration_t *pulsar_reader_configuration_create();
 
-void pulsar_reader_configuration_free(pulsar_reader_configuration_t *configuration);
+PULSAR_PUBLIC void pulsar_reader_configuration_free(pulsar_reader_configuration_t *configuration);
 
 /**
  * A message listener enables your application to configure how to process
  * messages. A listener will be called in order for every message received.
  */
-void pulsar_reader_configuration_set_reader_listener(
+PULSAR_PUBLIC void pulsar_reader_configuration_set_reader_listener(
     pulsar_reader_configuration_t *configuration, pulsar_reader_listener listener, void *ctx);
 
-int pulsar_reader_configuration_has_reader_listener(
+PULSAR_PUBLIC int pulsar_reader_configuration_has_reader_listener(
     pulsar_reader_configuration_t *configuration);
 
 /**
@@ -65,28 +68,38 @@ int pulsar_reader_configuration_has_reader_listener(
  * @param size
  *            the new receiver queue size value
  */
-void pulsar_reader_configuration_set_receiver_queue_size(
+PULSAR_PUBLIC void pulsar_reader_configuration_set_receiver_queue_size(
     pulsar_reader_configuration_t *configuration, int size);
 
-int pulsar_reader_configuration_get_receiver_queue_size(
+PULSAR_PUBLIC int pulsar_reader_configuration_get_receiver_queue_size(
     pulsar_reader_configuration_t *configuration);
 
-void pulsar_reader_configuration_set_reader_name(pulsar_reader_configuration_t *configuration,
+PULSAR_PUBLIC void pulsar_reader_configuration_set_reader_name(pulsar_reader_configuration_t *configuration,
                                                                const char *readerName);
 
-const char *pulsar_reader_configuration_get_reader_name(
+PULSAR_PUBLIC const char *pulsar_reader_configuration_get_reader_name(
     pulsar_reader_configuration_t *configuration);
 
-void pulsar_reader_configuration_set_subscription_role_prefix(
+PULSAR_PUBLIC void pulsar_reader_configuration_set_subscription_role_prefix(
     pulsar_reader_configuration_t *configuration, const char *subscriptionRolePrefix);
 
-const char *pulsar_reader_configuration_get_subscription_role_prefix(
+PULSAR_PUBLIC const char *pulsar_reader_configuration_get_subscription_role_prefix(
     pulsar_reader_configuration_t *configuration);
 
-void pulsar_reader_configuration_set_read_compacted(
+PULSAR_PUBLIC void pulsar_reader_configuration_set_read_compacted(
     pulsar_reader_configuration_t *configuration, int readCompacted);
 
-int pulsar_reader_configuration_is_read_compacted(pulsar_reader_configuration_t *configuration);
+PULSAR_PUBLIC int pulsar_reader_configuration_is_read_compacted(pulsar_reader_configuration_t *configuration);
+
+PULSAR_PUBLIC void pulsar_reader_configuration_set_default_crypto_key_reader(
+    pulsar_reader_configuration_t *configuration, const char *public_key_path, const char *private_key_path);
+
+PULSAR_PUBLIC pulsar_consumer_crypto_failure_action
+pulsar_reader_configuration_get_crypto_failure_action(pulsar_reader_configuration_t *configuration);
+
+PULSAR_PUBLIC void pulsar_reader_configuration_set_crypto_failure_action(
+    pulsar_reader_configuration_t *configuration,
+    pulsar_consumer_crypto_failure_action crypto_failure_action);
 
 #ifdef __cplusplus
 }

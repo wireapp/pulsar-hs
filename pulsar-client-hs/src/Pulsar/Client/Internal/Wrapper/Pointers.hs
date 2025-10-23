@@ -17,8 +17,6 @@ where
 import Pulsar.Client.Internal.Foreign.Client
 import Pulsar.Client.Internal.Foreign.Consumer
 import Pulsar.Client.Internal.Foreign.Message
-import Pulsar.Client.Internal.Foreign.MessageId
-import Pulsar.Client.Internal.Foreign.Producer
 import Pulsar.Client.Internal.Foreign.Reader
 import Pulsar.Client.Internal.Foreign.Result
 import UnliftIO.Foreign hiding (new)

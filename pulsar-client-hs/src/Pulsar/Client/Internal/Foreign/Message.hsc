@@ -5,12 +5,15 @@ module Pulsar.Client.Internal.Foreign.Message where
 import Foreign.Ptr
 #strict_import
 
-import Pulsar.Client.Internal.Foreign.MessageId
 import Pulsar.Client.Internal.Foreign.StringMap
 {- typedef struct _pulsar_message pulsar_message_t; -}
 #opaque_t struct _pulsar_message
 #synonym_t pulsar_message_t , <struct _pulsar_message>
+{- typedef struct _pulsar_message_id pulsar_message_id_t; -}
+#opaque_t struct _pulsar_message_id
+#synonym_t pulsar_message_id_t , <struct _pulsar_message_id>
 #ccall pulsar_message_create , IO (Ptr <struct _pulsar_message>)
+#ccall pulsar_message_copy , Ptr <struct _pulsar_message> -> Ptr <struct _pulsar_message> -> IO ()
 #ccall pulsar_message_free , Ptr <struct _pulsar_message> -> IO ()
 #ccall pulsar_message_set_content , Ptr <struct _pulsar_message> -> Ptr () -> CSize -> IO ()
 #ccall pulsar_message_set_allocated_content , Ptr <struct _pulsar_message> -> Ptr () -> CSize -> IO ()
