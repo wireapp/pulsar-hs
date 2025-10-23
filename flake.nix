@@ -123,6 +123,7 @@
             })
             haskellPackageNames
         );
+        formatter = pkgs.nixpkgs-fmt;
       }
     );
 }
