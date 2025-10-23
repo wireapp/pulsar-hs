@@ -103,11 +103,11 @@
       in
       rec {
         packages = {
+          default = pkgs.linkFarmFromDrvs "all-pulsar-hs" (builtins.attrValues localHaskellPackages);
           pulsar-client-cpp = pkgs.pulsar-client-cpp;
         }
         // mkPackageAttrs haskellPackageNames;
 
-        defaultPackage = pkgs.linkFarmFromDrvs "all-pulsar-hs" (builtins.attrValues localHaskellPackages);
 
         devShells = {
           default = haskellPackages.shellFor {
