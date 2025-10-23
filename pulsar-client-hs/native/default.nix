@@ -16,48 +16,49 @@
 , python3
 , snappy
 , zlib
-, zstd}:
+, zstd
+}:
 
 let
   # Not really sure why I need to do this.. If I call clang-tools without the override it defaults to clang_10
   clang-tools = pkgs.clang-tools_19;
 in
-  stdenv.mkDerivation rec {
-    pname = "pulsar-client-cpp";
-    inherit version;
+stdenv.mkDerivation rec {
+  pname = "pulsar-client-cpp";
+  inherit version;
 
-    src = fetchurl {
-      inherit sha512;
-      url = "https://archive.apache.org/dist/pulsar/pulsar-${version}/apache-pulsar-${version}-src.tar.gz";
-    };
+  src = fetchurl {
+    inherit sha512;
+    url = "https://archive.apache.org/dist/pulsar/pulsar-${version}/apache-pulsar-${version}-src.tar.gz";
+  };
 
-    sourceRoot = "apache-pulsar-${version}-src/pulsar-client-cpp";
+  sourceRoot = "apache-pulsar-${version}-src/pulsar-client-cpp";
 
-    # python37 used in cmake script to calculate some values
-    # clang-tools needed for clang-format etc
-    nativeBuildInputs = [ cmake python3 pkgconf clang-tools ];
+  # python37 used in cmake script to calculate some values
+  # clang-tools needed for clang-format etc
+  nativeBuildInputs = [ cmake python3 pkgconf clang-tools ];
 
-    buildInputs = [ boost177 jsoncpp log4cxx openssl protobuf_26 snappy zstd curl zlib ];
+  buildInputs = [ boost177 jsoncpp log4cxx openssl protobuf_26 snappy zstd curl zlib ];
 
-    # since we cant expand $out in cmakeFlags
-    preConfigure = ''cmakeFlags="$cmakeFlags -DCMAKE_INSTALL_LIBDIR=$out/lib"'';
+  # since we cant expand $out in cmakeFlags
+  preConfigure = ''cmakeFlags="$cmakeFlags -DCMAKE_INSTALL_LIBDIR=$out/lib"'';
 
-    cmakeFlags = [
-      "-DBUILD_TESTS=OFF"
-      "-DBUILD_PYTHON_WRAPPER=OFF"
-      "-DClangTools_PATH=${clang-tools}/bin"
-    ];
+  cmakeFlags = [
+    "-DBUILD_TESTS=OFF"
+    "-DBUILD_PYTHON_WRAPPER=OFF"
+    "-DClangTools_PATH=${clang-tools}/bin"
+  ];
 
-    enableParallelBuilding = true;
+  enableParallelBuilding = true;
 
-    patches = [ ./reader_configuration_includes.diff ./c++-17.diff ];
+  patches = [ ./reader_configuration_includes.diff ./c++-17.diff ];
 
-    meta = with lib; {
-      homepage = "https://pulsar.apache.org/docs/en/client-libraries-cpp";
-      description = "Apache Pulsar C++ library";
+  meta = with lib; {
+    homepage = "https://pulsar.apache.org/docs/en/client-libraries-cpp";
+    description = "Apache Pulsar C++ library";
 
-      platforms = [ "x86_64-darwin" "x86_64-linux" ];
-      license = licenses.asl20;
-      maintainers = [];
-    };
-  }
+    platforms = [ "x86_64-darwin" "x86_64-linux" ];
+    license = licenses.asl20;
+    maintainers = [ ];
+  };
+}
