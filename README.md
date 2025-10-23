@@ -10,3 +10,36 @@ Provides libraries to deal with [Apache Pulsar](https://pulsar.apache.org/en/):
 
  * [`pulsar-admin`](pulsar-admin) to deal with the Admin REST API
  * [`pulsar-client-hs`](pulsar-client-hs) to deal with the server
+
+## Building with Nix Flakes
+
+This project uses Nix flakes for reproducible builds and development environments.
+
+### Build all packages
+
+```bash
+nix build
+```
+
+### Build specific packages
+
+```bash
+nix build .#pulsar-client-hs
+nix build .#pulsar-admin
+nix build .#pulsar-client-hs-examples
+nix build .#pulsar-client-cpp
+```
+
+### Development shell
+
+Enter a development environment with all necessary tools (GHC 9.8, cabal, haskell-language-server, etc.):
+
+```bash
+nix develop
+```
+
+Or use direnv for automatic environment loading:
+
+```bash
+direnv allow
+```
