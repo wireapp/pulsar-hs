@@ -18,26 +18,9 @@
         packageOverlay = final: prev: {
           # Native C++ library. The original pulsar package is marked as
           # insecure, so we simply override it.
-          pulsar-client-cpp = prev.callPackage ./pulsar-client-hs/native {
-            inherit (pkgs)
-              stdenv
-              lib
-              pkgs
-              boost177
-              cmake
-              curl
-              jsoncpp
-              log4cxx
-              openssl
-              pkgconf
-              protobuf_26
-              python3
-              snappy
-              zlib
-              zstd
-              fetchurl
-              ;
-          };
+          pulsar-client-cpp = prev.libpulsar.overrideAttrs (old: {
+              patches = (old.patches or []) ++ [ ./nix/add-stdbool-table-view.patch ];
+            });
         };
 
         pkgs = nixpkgs.legacyPackages.${system}.extend packageOverlay;

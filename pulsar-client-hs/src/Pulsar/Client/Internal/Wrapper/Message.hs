@@ -60,7 +60,7 @@ defaultMessageBuilder =
       disableReplication = Nothing
     }
 
-buildMessage :: MonadResource m => MessageBuilder -> m (ReleaseKey, BuiltMessage)
+buildMessage :: (MonadResource m) => MessageBuilder -> m (ReleaseKey, BuiltMessage)
 buildMessage MessageBuilder {..} = do
   (release, config) <- allocate c'pulsar_message_create c'pulsar_message_free
   whenOptionByteString content $ c'pulsar_message_set_content config
@@ -75,7 +75,7 @@ buildMessage MessageBuilder {..} = do
   whenOption disableReplication $ c'pulsar_message_disable_replication config . fromBool
   return (release, BuiltMessage $ Message config)
 
-consumeMessage :: MonadIO m => FetchedMessage s -> ReaderT (FetchedMessage s) m a -> m a
+consumeMessage :: (MonadIO m) => FetchedMessage s -> ReaderT (FetchedMessage s) m a -> m a
 consumeMessage ptr r = do
   result <- runReaderT r ptr
   liftIO $ c'pulsar_message_free $ unMessage $ unFetchedMessage ptr

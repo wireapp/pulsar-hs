@@ -1,0 +1,12 @@
+diff --git a/include/pulsar/c/table_view.h b/include/pulsar/c/table_view.h
+index 87eed3e..ae6fd06 100644
+--- a/include/pulsar/c/table_view.h
++++ b/include/pulsar/c/table_view.h
+@@ -27,6 +27,7 @@ extern "C" {
+ #include <pulsar/c/message.h>
+ #include <pulsar/c/messages.h>
+ #include <pulsar/c/result.h>
++#include <stdbool.h>
+ #include <stdint.h>
+
+ typedef struct _pulsar_table_view pulsar_table_view_t;
