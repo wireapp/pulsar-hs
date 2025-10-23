@@ -19,28 +19,46 @@
 
 #pragma once
 
+#include <pulsar/defines.h>
+#include <stdbool.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef enum { pulsar_DEBUG = 0, pulsar_INFO = 1, pulsar_WARN = 2, pulsar_ERROR = 3 } pulsar_logger_level_t;
+typedef enum
+{
+    pulsar_DEBUG = 0,
+    pulsar_INFO = 1,
+    pulsar_WARN = 2,
+    pulsar_ERROR = 3
+} pulsar_logger_level_t;
 
 typedef void (*pulsar_logger)(pulsar_logger_level_t level, const char *file, int line, const char *message,
                               void *ctx);
 
+typedef struct pulsar_logger_t {
+    // The context that will be passed into `is_enabled` and `log` as the last argument
+    void *ctx;
+    // Whether to log for the given log level
+    bool (*is_enabled)(pulsar_logger_level_t level, void *ctx);
+    // How to log the message
+    pulsar_logger log;
+} pulsar_logger_t;
+
 typedef struct _pulsar_client_configuration pulsar_client_configuration_t;
 typedef struct _pulsar_authentication pulsar_authentication_t;
 
-pulsar_client_configuration_t *pulsar_client_configuration_create();
+PULSAR_PUBLIC pulsar_client_configuration_t *pulsar_client_configuration_create();
 
-void pulsar_client_configuration_free(pulsar_client_configuration_t *conf);
+PULSAR_PUBLIC void pulsar_client_configuration_free(pulsar_client_configuration_t *conf);
 
 /**
  * Set the authentication method to be used with the broker
  *
  * @param authentication the authentication data to use
  */
-void pulsar_client_configuration_set_auth(pulsar_client_configuration_t *conf,
+PULSAR_PUBLIC void pulsar_client_configuration_set_auth(pulsar_client_configuration_t *conf,
                                                         pulsar_authentication_t *authentication);
 
 /**
@@ -49,13 +67,13 @@ void pulsar_client_configuration_set_auth(pulsar_client_configuration_t *conf,
  *
  * @param memoryLimitBytes the memory limit
  */
-void pulsar_client_configuration_set_memory_limit(pulsar_client_configuration_t *conf,
+PULSAR_PUBLIC void pulsar_client_configuration_set_memory_limit(pulsar_client_configuration_t *conf,
                                                                 unsigned long long memoryLimitBytes);
 
 /**
  * @return the client memory limit in bytes
  */
-unsigned long long pulsar_client_configuration_get_memory_limit(
+PULSAR_PUBLIC unsigned long long pulsar_client_configuration_get_memory_limit(
     pulsar_client_configuration_t *conf);
 
 /**
@@ -64,13 +82,13 @@ unsigned long long pulsar_client_configuration_get_memory_limit(
  *
  * @param timeout the timeout after which the operation will be considered as failed
  */
-void pulsar_client_configuration_set_operation_timeout_seconds(
+PULSAR_PUBLIC void pulsar_client_configuration_set_operation_timeout_seconds(
     pulsar_client_configuration_t *conf, int timeout);
 
 /**
  * @return the client operations timeout in seconds
  */
-int pulsar_client_configuration_get_operation_timeout_seconds(
+PULSAR_PUBLIC int pulsar_client_configuration_get_operation_timeout_seconds(
     pulsar_client_configuration_t *conf);
 
 /**
@@ -79,13 +97,13 @@ int pulsar_client_configuration_get_operation_timeout_seconds(
  *
  * @param threads number of threads
  */
-void pulsar_client_configuration_set_io_threads(pulsar_client_configuration_t *conf,
+PULSAR_PUBLIC void pulsar_client_configuration_set_io_threads(pulsar_client_configuration_t *conf,
                                                               int threads);
 
 /**
  * @return the number of IO threads to use
  */
-int pulsar_client_configuration_get_io_threads(pulsar_client_configuration_t *conf);
+PULSAR_PUBLIC int pulsar_client_configuration_get_io_threads(pulsar_client_configuration_t *conf);
 
 /**
  * Set the number of threads to be used by the Pulsar client when delivering messages
@@ -97,13 +115,13 @@ int pulsar_client_configuration_get_io_threads(pulsar_client_configuration_t *co
  *
  * @param threads number of threads
  */
-void pulsar_client_configuration_set_message_listener_threads(
+PULSAR_PUBLIC void pulsar_client_configuration_set_message_listener_threads(
     pulsar_client_configuration_t *conf, int threads);
 
 /**
  * @return the number of IO threads to use
  */
-int pulsar_client_configuration_get_message_listener_threads(
+PULSAR_PUBLIC int pulsar_client_configuration_get_message_listener_threads(
     pulsar_client_configuration_t *conf);
 
 /**
@@ -114,50 +132,82 @@ int pulsar_client_configuration_get_message_listener_threads(
  *
  * @param concurrentLookupRequest
  */
-void pulsar_client_configuration_set_concurrent_lookup_request(
+PULSAR_PUBLIC void pulsar_client_configuration_set_concurrent_lookup_request(
     pulsar_client_configuration_t *conf, int concurrentLookupRequest);
 
 /**
  * @return Get configured total allowed concurrent lookup-request.
  */
-int pulsar_client_configuration_get_concurrent_lookup_request(
+PULSAR_PUBLIC int pulsar_client_configuration_get_concurrent_lookup_request(
     pulsar_client_configuration_t *conf);
 
-void pulsar_client_configuration_set_logger(pulsar_client_configuration_t *conf,
+PULSAR_PUBLIC void pulsar_client_configuration_set_logger(pulsar_client_configuration_t *conf,
                                                           pulsar_logger logger, void *ctx);
 
-void pulsar_client_configuration_set_use_tls(pulsar_client_configuration_t *conf, int useTls);
+PULSAR_PUBLIC void pulsar_client_configuration_set_logger_t(pulsar_client_configuration_t *conf,
+                                                            pulsar_logger_t logger);
 
-int pulsar_client_configuration_is_use_tls(pulsar_client_configuration_t *conf);
+PULSAR_PUBLIC void pulsar_client_configuration_set_use_tls(pulsar_client_configuration_t *conf, int useTls);
 
-void pulsar_client_configuration_set_tls_trust_certs_file_path(
+PULSAR_PUBLIC int pulsar_client_configuration_is_use_tls(pulsar_client_configuration_t *conf);
+
+PULSAR_PUBLIC void pulsar_client_configuration_set_tls_trust_certs_file_path(
     pulsar_client_configuration_t *conf, const char *tlsTrustCertsFilePath);
 
-const char *pulsar_client_configuration_get_tls_trust_certs_file_path(
+PULSAR_PUBLIC const char *pulsar_client_configuration_get_tls_trust_certs_file_path(
     pulsar_client_configuration_t *conf);
 
-void pulsar_client_configuration_set_tls_allow_insecure_connection(
+PULSAR_PUBLIC void pulsar_client_configuration_set_tls_allow_insecure_connection(
     pulsar_client_configuration_t *conf, int allowInsecure);
 
-int pulsar_client_configuration_is_tls_allow_insecure_connection(
+PULSAR_PUBLIC void pulsar_client_configuration_set_tls_private_key_file_path(
+    pulsar_client_configuration_t *conf, const char *private_key_file_path);
+
+PULSAR_PUBLIC const char *pulsar_client_configuration_get_tls_private_key_file_path(
+    pulsar_client_configuration_t *conf);
+
+PULSAR_PUBLIC void pulsar_client_configuration_set_tls_certificate_file_path(
+    pulsar_client_configuration_t *conf, const char *certificateFilePath);
+
+PULSAR_PUBLIC const char *pulsar_client_configuration_get_tls_certificate_file_path(
+    pulsar_client_configuration_t *conf);
+
+PULSAR_PUBLIC int pulsar_client_configuration_is_tls_allow_insecure_connection(
     pulsar_client_configuration_t *conf);
 
 /*
  * Initialize stats interval in seconds. Stats are printed and reset after every 'statsIntervalInSeconds'.
  * Set to 0 in order to disable stats collection.
  */
-void pulsar_client_configuration_set_stats_interval_in_seconds(
+PULSAR_PUBLIC void pulsar_client_configuration_set_stats_interval_in_seconds(
     pulsar_client_configuration_t *conf, const unsigned int interval);
 
-int pulsar_client_configuration_is_validate_hostname(pulsar_client_configuration_t *conf);
+PULSAR_PUBLIC int pulsar_client_configuration_is_validate_hostname(pulsar_client_configuration_t *conf);
 
-void pulsar_client_configuration_set_validate_hostname(pulsar_client_configuration_t *conf,
+PULSAR_PUBLIC void pulsar_client_configuration_set_validate_hostname(pulsar_client_configuration_t *conf,
                                                                      int validateHostName);
+
+PULSAR_PUBLIC void pulsar_client_configuration_set_listener_name(pulsar_client_configuration_t *conf,
+                                                                 const char *listenerName);
+
+PULSAR_PUBLIC const char *pulsar_client_configuration_get_listener_name(pulsar_client_configuration_t *conf);
+
+PULSAR_PUBLIC void pulsar_client_configuration_set_partitions_update_interval(
+    pulsar_client_configuration_t *conf, const unsigned int intervalInSeconds);
+
+PULSAR_PUBLIC unsigned int pulsar_client_configuration_get_partitions_update_interval(
+    pulsar_client_configuration_t *conf);
 
 /*
  * Get the stats interval set in the client.
  */
-const unsigned int pulsar_client_configuration_get_stats_interval_in_seconds(
+PULSAR_PUBLIC unsigned int pulsar_client_configuration_get_stats_interval_in_seconds(
+    pulsar_client_configuration_t *conf);
+
+PULSAR_PUBLIC void pulsar_client_configuration_set_keep_alive_interval_in_seconds(
+    pulsar_client_configuration_t *conf, unsigned int keepAliveIntervalInSeconds);
+
+PULSAR_PUBLIC unsigned int pulsar_client_configuration_get_keep_alive_interval_in_seconds(
     pulsar_client_configuration_t *conf);
 
 #ifdef __cplusplus
