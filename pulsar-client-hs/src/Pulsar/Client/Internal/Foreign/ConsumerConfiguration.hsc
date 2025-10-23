@@ -3,12 +3,11 @@
 #include <pulsar/c/consumer_configuration.h>
 module Pulsar.Client.Internal.Foreign.ConsumerConfiguration where
 import Foreign.Ptr
-#strict_import
-
 import Pulsar.Client.Internal.Foreign.Consumer
 import Pulsar.Client.Internal.Foreign.Message
 import Pulsar.Client.Internal.Foreign.ProducerConfiguration
 import Pulsar.Client.Internal.Foreign.StringMap
+#strict_import
 {- typedef struct _pulsar_consumer_configuration pulsar_consumer_configuration_t; -}
 #opaque_t struct _pulsar_consumer_configuration
 #synonym_t pulsar_consumer_configuration_t , <struct _pulsar_consumer_configuration>
@@ -36,6 +35,33 @@ import Pulsar.Client.Internal.Foreign.StringMap
 #num pulsar_ConsumerFail
 #num pulsar_ConsumerDiscard
 #num pulsar_ConsumerConsume
+{- typedef enum {
+            pulsar_consumer_regex_sub_mode_PersistentOnly = 0,
+            pulsar_consumer_regex_sub_mode_NonPersistentOnly = 1,
+            pulsar_consumer_regex_sub_mode_AllTopics = 2
+        } pulsar_consumer_regex_subscription_mode; -}
+#integral_t pulsar_consumer_regex_subscription_mode
+#num pulsar_consumer_regex_sub_mode_PersistentOnly
+#num pulsar_consumer_regex_sub_mode_NonPersistentOnly
+#num pulsar_consumer_regex_sub_mode_AllTopics
+{- typedef struct {
+            int maxNumMessages; long maxNumBytes; long timeoutMs;
+        } pulsar_consumer_batch_receive_policy_t; -}
+#starttype pulsar_consumer_batch_receive_policy_t
+#field maxNumMessages , CInt
+#field maxNumBytes , CLong
+#field timeoutMs , CLong
+#stoptype
+{- typedef struct {
+            const char * dead_letter_topic;
+            int max_redeliver_count;
+            const char * initial_subscription_name;
+        } pulsar_consumer_config_dead_letter_policy_t; -}
+#starttype pulsar_consumer_config_dead_letter_policy_t
+#field dead_letter_topic , CString
+#field max_redeliver_count , CInt
+#field initial_subscription_name , CString
+#stoptype
 #callback pulsar_message_listener , Ptr <struct _pulsar_consumer> -> Ptr <struct _pulsar_message> -> Ptr () -> IO ()
 #ccall pulsar_consumer_configuration_create , IO (Ptr <struct _pulsar_consumer_configuration>)
 #ccall pulsar_consumer_configuration_free , Ptr <struct _pulsar_consumer_configuration> -> IO ()
@@ -67,3 +93,21 @@ import Pulsar.Client.Internal.Foreign.StringMap
 #ccall pulsar_consumer_get_subscription_initial_position , Ptr <struct _pulsar_consumer_configuration> -> IO CInt
 #ccall pulsar_consumer_set_subscription_initial_position , Ptr <struct _pulsar_consumer_configuration> -> <initial_position> -> IO ()
 #ccall pulsar_consumer_configuration_set_property , Ptr <struct _pulsar_consumer_configuration> -> CString -> CString -> IO ()
+#ccall pulsar_consumer_configuration_set_priority_level , Ptr <struct _pulsar_consumer_configuration> -> CInt -> IO ()
+#ccall pulsar_consumer_configuration_get_priority_level , Ptr <struct _pulsar_consumer_configuration> -> IO CInt
+#ccall pulsar_consumer_configuration_set_max_pending_chunked_message , Ptr <struct _pulsar_consumer_configuration> -> CInt -> IO ()
+#ccall pulsar_consumer_configuration_get_max_pending_chunked_message , Ptr <struct _pulsar_consumer_configuration> -> IO CInt
+#ccall pulsar_consumer_configuration_set_auto_ack_oldest_chunked_message_on_queue_full , Ptr <struct _pulsar_consumer_configuration> -> CInt -> IO ()
+#ccall pulsar_consumer_configuration_is_auto_ack_oldest_chunked_message_on_queue_full , Ptr <struct _pulsar_consumer_configuration> -> IO CInt
+#ccall pulsar_consumer_configuration_set_start_message_id_inclusive , Ptr <struct _pulsar_consumer_configuration> -> CInt -> IO ()
+#ccall pulsar_consumer_configuration_is_start_message_id_inclusive , Ptr <struct _pulsar_consumer_configuration> -> IO CInt
+#ccall pulsar_consumer_configuration_set_batch_index_ack_enabled , Ptr <struct _pulsar_consumer_configuration> -> CInt -> IO ()
+#ccall pulsar_consumer_configuration_is_batch_index_ack_enabled , Ptr <struct _pulsar_consumer_configuration> -> IO CInt
+#ccall pulsar_consumer_configuration_set_regex_subscription_mode , Ptr <struct _pulsar_consumer_configuration> -> <pulsar_consumer_regex_subscription_mode> -> IO ()
+#ccall pulsar_consumer_configuration_get_regex_subscription_mode , Ptr <struct _pulsar_consumer_configuration> -> IO <pulsar_consumer_regex_subscription_mode>
+#ccall pulsar_consumer_configuration_set_start_paused , Ptr <struct _pulsar_consumer_configuration> -> CInt -> IO ()
+#ccall pulsar_consumer_configuration_is_start_paused , Ptr <struct _pulsar_consumer_configuration> -> IO CInt
+#ccall pulsar_consumer_configuration_set_batch_receive_policy , Ptr <struct _pulsar_consumer_configuration> -> Ptr <pulsar_consumer_batch_receive_policy_t> -> IO CInt
+#ccall pulsar_consumer_configuration_get_batch_receive_policy , Ptr <struct _pulsar_consumer_configuration> -> Ptr <pulsar_consumer_batch_receive_policy_t> -> IO ()
+#ccall pulsar_consumer_configuration_set_dlq_policy , Ptr <struct _pulsar_consumer_configuration> -> Ptr <pulsar_consumer_config_dead_letter_policy_t> -> IO ()
+#ccall pulsar_consumer_configuration_get_dlq_policy , Ptr <struct _pulsar_consumer_configuration> -> Ptr <pulsar_consumer_config_dead_letter_policy_t> -> IO ()

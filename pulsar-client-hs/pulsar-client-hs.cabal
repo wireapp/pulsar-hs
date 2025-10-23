@@ -49,6 +49,9 @@ library
         Pulsar.Client.Internal.Foreign.Result
         Pulsar.Client.Internal.Foreign.StringList
         Pulsar.Client.Internal.Foreign.StringMap
+        Pulsar.Client.Internal.Foreign.TableView
+        Pulsar.Client.Internal.Foreign.TableViewConfiguration
+        Pulsar.Client.Internal.Foreign.Messages
         -- Wrappers (Ease usage)
         Pulsar.Client.Internal.Wrapper.Authentication
         Pulsar.Client.Internal.Wrapper.ClientConfiguration

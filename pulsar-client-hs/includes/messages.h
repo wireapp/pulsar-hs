@@ -16,28 +16,35 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 #pragma once
 
+#include "message.h"
 #include <pulsar/defines.h>
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef struct _pulsar_string_map pulsar_string_map_t;
+typedef struct _pulsar_messages pulsar_messages_t;
 
-PULSAR_PUBLIC pulsar_string_map_t *pulsar_string_map_create();
-PULSAR_PUBLIC void pulsar_string_map_free(pulsar_string_map_t *map);
+/**
+ * Get the number of messages.
+ *
+ * NOTE: Undefined behavior will happen if `msgs` is NULL.
+ */
+PULSAR_PUBLIC size_t pulsar_messages_size(pulsar_messages_t* msgs);
 
-PULSAR_PUBLIC int pulsar_string_map_size(pulsar_string_map_t *map);
+/**
+ * Get the Nth message according to the given index.
+ *
+ * NOTE:
+ * 1. You should not free the returned pointer, which always points to a valid memory unless `msgs` is freed.
+ * 2. Undefined behavior will happen if `msgs` is NULL or `index` is not smaller than the number of messages.
+ */
+PULSAR_PUBLIC pulsar_message_t* pulsar_messages_get(pulsar_messages_t* msgs, size_t index);
 
-PULSAR_PUBLIC void pulsar_string_map_put(pulsar_string_map_t *map, const char *key, const char *value);
-
-PULSAR_PUBLIC const char *pulsar_string_map_get(pulsar_string_map_t *map, const char *key);
-
-PULSAR_PUBLIC const char *pulsar_string_map_get_key(pulsar_string_map_t *map, int idx);
-PULSAR_PUBLIC const char *pulsar_string_map_get_value(pulsar_string_map_t *map, int idx);
+PULSAR_PUBLIC void pulsar_messages_free(pulsar_messages_t* msgs);
 
 #ifdef __cplusplus
 }

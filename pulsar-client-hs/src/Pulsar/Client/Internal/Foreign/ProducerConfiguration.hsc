@@ -3,10 +3,10 @@
 #include <pulsar/c/producer_configuration.h>
 module Pulsar.Client.Internal.Foreign.ProducerConfiguration where
 import Foreign.Ptr
-#strict_import
-
 import Pulsar.Client.Internal.Foreign.MessageRouter
 import Pulsar.Client.Internal.Foreign.StringMap
+#strict_import
+
 {- typedef enum {
             pulsar_UseSinglePartition,
             pulsar_RoundRobinDistribution,
@@ -77,6 +77,17 @@ import Pulsar.Client.Internal.Foreign.StringMap
 #integral_t pulsar_producer_crypto_failure_action
 #num pulsar_ProducerFail
 #num pulsar_ProducerSend
+{- typedef enum {
+            pulsar_ProducerAccessModeShared = 0,
+            pulsar_ProducerAccessModeExclusive = 1,
+            pulsar_ProducerAccessModeWaitForExclusive = 2,
+            pulsar_ProducerAccessModeExclusiveWithFencing = 3
+        } pulsar_producer_access_mode; -}
+#integral_t pulsar_producer_access_mode
+#num pulsar_ProducerAccessModeShared
+#num pulsar_ProducerAccessModeExclusive
+#num pulsar_ProducerAccessModeWaitForExclusive
+#num pulsar_ProducerAccessModeExclusiveWithFencing
 {- typedef struct _pulsar_producer_configuration pulsar_producer_configuration_t; -}
 #opaque_t struct _pulsar_producer_configuration
 #synonym_t pulsar_producer_configuration_t , <struct _pulsar_producer_configuration>
@@ -103,6 +114,8 @@ import Pulsar.Client.Internal.Foreign.StringMap
 #ccall pulsar_producer_configuration_set_message_router , Ptr <struct _pulsar_producer_configuration> -> <pulsar_message_router> -> Ptr () -> IO ()
 #ccall pulsar_producer_configuration_set_hashing_scheme , Ptr <struct _pulsar_producer_configuration> -> <pulsar_hashing_scheme> -> IO ()
 #ccall pulsar_producer_configuration_get_hashing_scheme , Ptr <struct _pulsar_producer_configuration> -> IO <pulsar_hashing_scheme>
+#ccall pulsar_producer_configuration_set_lazy_start_partitioned_producers , Ptr <struct _pulsar_producer_configuration> -> CInt -> IO ()
+#ccall pulsar_producer_configuration_get_lazy_start_partitioned_producers , Ptr <struct _pulsar_producer_configuration> -> IO CInt
 #ccall pulsar_producer_configuration_set_block_if_queue_full , Ptr <struct _pulsar_producer_configuration> -> CInt -> IO ()
 #ccall pulsar_producer_configuration_get_block_if_queue_full , Ptr <struct _pulsar_producer_configuration> -> IO CInt
 #ccall pulsar_producer_configuration_set_batching_enabled , Ptr <struct _pulsar_producer_configuration> -> CInt -> IO ()
@@ -120,3 +133,7 @@ import Pulsar.Client.Internal.Foreign.StringMap
 -- #ccall pulsar_producer_configuration_get_crypto_failure_action , Ptr <struct _pulsar_producer_configuration> -> IO <pulsar_producer_crypto_failure_action>
 #ccall pulsar_producer_configuration_set_crypto_failure_action , Ptr <struct _pulsar_producer_configuration> -> <pulsar_producer_crypto_failure_action> -> IO ()
 #ccall pulsar_producer_configuration_set_encryption_key , Ptr <struct _pulsar_producer_configuration> -> CString -> IO ()
+#ccall pulsar_producer_configuration_set_chunking_enabled , Ptr <struct _pulsar_producer_configuration> -> CInt -> IO ()
+#ccall pulsar_producer_configuration_is_chunking_enabled , Ptr <struct _pulsar_producer_configuration> -> IO CInt
+#ccall pulsar_producer_configuration_get_access_mode , Ptr <struct _pulsar_producer_configuration> -> IO <pulsar_producer_access_mode>
+#ccall pulsar_producer_configuration_set_access_mode , Ptr <struct _pulsar_producer_configuration> -> <pulsar_producer_access_mode> -> IO ()
