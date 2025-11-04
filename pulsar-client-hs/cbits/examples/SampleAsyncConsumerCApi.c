@@ -20,6 +20,18 @@
 #include <pulsar/c/client.h>
 #include <stdio.h>
 
+static void receive_callback(pulsar_result result, pulsar_message_t *message, void *ctx) {
+    pulsar_consumer_t *consumer = (pulsar_consumer_t *)ctx;
+    if (result == pulsar_result_Ok) {
+        printf("Received message with payload: '%.*s'\n", pulsar_message_get_length(message),
+               (const char *)pulsar_message_get_data(message));
+        pulsar_consumer_acknowledge(consumer, message);
+    } else {
+        printf("Failed to receive message: %s\n", pulsar_result_str(result));
+    }
+    pulsar_message_free(message);
+}
+
 int main() {
     pulsar_client_configuration_t *conf = pulsar_client_configuration_create();
     pulsar_client_t *client = pulsar_client_create("pulsar://localhost:6650", conf);
@@ -35,20 +47,15 @@ int main() {
         return 1;
     }
 
-    for (;;) {
-        pulsar_message_t *message;
-        res = pulsar_consumer_receive(consumer, &message);
-        if (res != pulsar_result_Ok) {
-            printf("Failed to receive message: %s\n", pulsar_result_str(res));
-            return 1;
-        }
-
-        printf("Received message with payload: '%.*s'\n", pulsar_message_get_length(message),
-               (const char *)pulsar_message_get_data(message));
-
-        pulsar_consumer_acknowledge(consumer, message);
-        pulsar_message_free(message);
+    // receive 10 messages asynchronously
+    for (int i = 0; i < 10; i++) {
+        pulsar_consumer_receive_async(consumer, receive_callback, consumer);
     }
+
+    // Block main thread
+    fgetc(stdin);
+
+    printf("\nClosing consumer\n");
 
     // Cleanup
     pulsar_consumer_close(consumer);
