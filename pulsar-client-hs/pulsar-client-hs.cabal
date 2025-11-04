@@ -69,7 +69,7 @@ library
     other-modules:
         Pulsar.Client.Internal.Wrapper.Utils
         Paths_pulsar_client_hs
-    ghc-options: -Wunused-binds -Wunused-imports -Worphans
+    ghc-options: -Wunused-binds -Wunused-imports -Worphans -optl-Wl,--wrap=pulsar_client_configuration_set_logger_t
 
     include-dirs:
         includes
@@ -90,6 +90,8 @@ library
         result.h
         string_list.h
         string_map.h
+
+    c-sources: cbits/wrappers.c
 
     extra-libraries: pulsar
 

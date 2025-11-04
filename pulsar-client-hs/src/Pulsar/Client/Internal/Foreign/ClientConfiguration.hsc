@@ -47,8 +47,11 @@ import Pulsar.Client.Internal.Foreign.Result
 #ccall pulsar_client_configuration_set_concurrent_lookup_request , Ptr <struct _pulsar_client_configuration> -> CInt -> IO ()
 #ccall pulsar_client_configuration_get_concurrent_lookup_request , Ptr <struct _pulsar_client_configuration> -> IO CInt
 #ccall pulsar_client_configuration_set_logger , Ptr <struct _pulsar_client_configuration> -> <pulsar_logger> -> Ptr () -> IO ()
--- TODO: Structs cannot be passed by value. Consider to write a wrapper function.
--- #ccall pulsar_client_configuration_set_logger_t , Ptr <struct _pulsar_client_configuration> -> <struct pulsar_logger_t> -> IO ()
+-- The library expects a `<struct pulsar_logger_t>`, not a `Ptr <struct
+-- pulsar_logger_t>` as argument for
+-- `pulsar_client_configuration_set_logger_t()`. We translate this difference
+-- with a `ld --wrap ...` wrapper function.
+#ccall pulsar_client_configuration_set_logger_t , Ptr <struct _pulsar_client_configuration> -> Ptr <struct pulsar_logger_t> -> IO ()
 #ccall pulsar_client_configuration_set_use_tls , Ptr <struct _pulsar_client_configuration> -> CInt -> IO ()
 #ccall pulsar_client_configuration_is_use_tls , Ptr <struct _pulsar_client_configuration> -> IO CInt
 #ccall pulsar_client_configuration_set_tls_trust_certs_file_path , Ptr <struct _pulsar_client_configuration> -> CString -> IO ()
