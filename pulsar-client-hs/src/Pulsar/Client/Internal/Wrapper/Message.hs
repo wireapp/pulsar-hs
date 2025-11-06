@@ -16,7 +16,7 @@ module Pulsar.Client.Internal.Wrapper.Message
     messageEventTimestamp,
     messageTopicName,
     messageRedeliveryCount,
-    messageSchemaVersion,
+    -- messageSchemaVersion,
   )
 where
 
@@ -24,7 +24,6 @@ import Control.DeepSeq (force)
 import Control.Exception (evaluate)
 import Data.ByteString
 import Data.ByteString.Builder (byteString, toLazyByteString)
-import Data.ByteString.Lazy (toStrict)
 import Data.ByteString.Unsafe (unsafePackAddressLen)
 import Foreign.C.Types
 import GHC.Ptr
@@ -125,5 +124,6 @@ messageTopicName = ask >>= \x -> liftIO $ c'pulsar_message_get_topic_name (unMes
 messageRedeliveryCount :: (MonadIO m, MonadReader (FetchedMessage s) m) => m Int32
 messageRedeliveryCount = ask >>= liftIO . fmap (\(CInt x) -> x) . c'pulsar_message_get_redelivery_count . unMessage . unFetchedMessage
 
-messageSchemaVersion :: (MonadIO m, MonadReader (FetchedMessage s) m) => m String
-messageSchemaVersion = ask >>= \x -> liftIO $ c'pulsar_message_get_schemaVersion (unMessage $ unFetchedMessage x) >>= peekCString
+-- pulsar_message_get_schemaVersion does not exist in the library
+-- messageSchemaVersion :: (MonadIO m, MonadReader (FetchedMessage s) m) => m String
+-- messageSchemaVersion = ask >>= \x -> liftIO $ c'pulsar_message_get_schemaVersion (unMessage $ unFetchedMessage x) >>= peekCString

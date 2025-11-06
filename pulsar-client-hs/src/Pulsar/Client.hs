@@ -52,7 +52,7 @@ module Pulsar.Client
     messageEventTimestamp,
     messageTopicName,
     messageRedeliveryCount,
-    messageSchemaVersion,
+    -- messageSchemaVersion,
 
     -- * MessageId
     MessageId (..),
