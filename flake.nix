@@ -19,8 +19,13 @@
           # Native C++ library. The original pulsar package is marked as
           # insecure, so we simply override it.
           pulsar-client-cpp = prev.libpulsar.overrideAttrs (old: {
-              patches = (old.patches or []) ++ [ ./nix/add-stdbool-table-view.patch ];
-            });
+            # N.B. patches need to be tracked by Git. Otherwise, Nix doesn't
+            # pick them up!
+            patches = (old.patches or [ ]) ++ [
+              ./nix/add-stdbool-table-view.patch
+              ./nix/ffi-race-condition.patch
+            ];
+          });
         };
 
         pkgs = nixpkgs.legacyPackages.${system}.extend packageOverlay;
