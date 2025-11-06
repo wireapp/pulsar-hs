@@ -116,6 +116,7 @@ import Pulsar.Client.Internal.Foreign.StringMap
 #ccall pulsar_producer_configuration_set_property , Ptr <struct _pulsar_producer_configuration> -> CString -> CString -> IO ()
 #ccall pulsar_producer_is_encryption_enabled , Ptr <struct _pulsar_producer_configuration> -> IO CInt
 #ccall pulsar_producer_configuration_set_default_crypto_key_reader , Ptr <struct _pulsar_producer_configuration> -> CString -> CString -> IO ()
-#ccall pulsar_producer_configuration_get_crypto_failure_action , Ptr <struct _pulsar_producer_configuration> -> IO <pulsar_producer_crypto_failure_action>
+-- Symbol does not exist in libpulsar
+-- #ccall pulsar_producer_configuration_get_crypto_failure_action , Ptr <struct _pulsar_producer_configuration> -> IO <pulsar_producer_crypto_failure_action>
 #ccall pulsar_producer_configuration_set_crypto_failure_action , Ptr <struct _pulsar_producer_configuration> -> <pulsar_producer_crypto_failure_action> -> IO ()
 #ccall pulsar_producer_configuration_set_encryption_key , Ptr <struct _pulsar_producer_configuration> -> CString -> IO ()

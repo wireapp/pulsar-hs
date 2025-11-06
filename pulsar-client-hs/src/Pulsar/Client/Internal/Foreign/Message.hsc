@@ -37,6 +37,9 @@ import Pulsar.Client.Internal.Foreign.StringMap
 #ccall pulsar_message_get_event_timestamp , Ptr <struct _pulsar_message> -> IO CULong
 #ccall pulsar_message_get_topic_name , Ptr <struct _pulsar_message> -> IO CString
 #ccall pulsar_message_get_redelivery_count , Ptr <struct _pulsar_message> -> IO CInt
-#ccall pulsar_message_has_schema_version , Ptr <struct _pulsar_message> -> IO CInt
-#ccall pulsar_message_get_schemaVersion , Ptr <struct _pulsar_message> -> IO CString
-#ccall pulsar_message_set_schema_version , Ptr <struct _pulsar_message> -> CString -> IO ()
+-- Symbols do not exist in libpulsar.
+-- #ccall pulsar_message_has_schema_version , Ptr <struct _pulsar_message> -> IO CInt
+-- #ccall pulsar_message_get_schemaVersion , Ptr <struct _pulsar_message> -> IO CString
+
+-- Symbol does not exist in libpulsar. See https://github.com/apache/pulsar-client-cpp/issues/522
+-- #ccall pulsar_message_set_schema_version , Ptr <struct _pulsar_message> -> CString -> IO ()
