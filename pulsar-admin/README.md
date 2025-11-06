@@ -31,3 +31,11 @@ npx @openapitools/openapi-generator-cli generate \
 
  * Reformat files
  * Move files
+
+#### Sven's fixup strategy
+
+- Most duplicated `operationId`s are due to a mismatch of the persistence prefix:
+  - Mark all lines for `/non-persistent/` endpoints
+  - Replace `"PersistentTopics_` with `"NonPersistentTopics_`
+- Fix the left over duplicates meaningfully: Look what the endpoint should do
+  and adjust its `operationId` accordingly.
