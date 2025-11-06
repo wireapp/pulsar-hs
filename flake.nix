@@ -51,17 +51,12 @@
             };
 
             pulsar-admin = pkgs.haskell.lib.dontCheck (self.callCabal2nix "pulsar-admin" ./pulsar-admin { });
-
-            pulsar-client-hs-examples =
-              self.callCabal2nix "pulsar-client-hs-examples" ./pulsar-client-hs/examples
-                { };
-          };
+         };
         };
 
         localHaskellPackages = {
           pulsar-client-hs = haskellPackages.pulsar-client-hs;
           pulsar-admin = haskellPackages.pulsar-admin;
-          pulsar-client-hs-examples = haskellPackages.pulsar-client-hs-examples;
         };
 
         devTools =

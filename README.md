@@ -26,7 +26,6 @@ nix build
 ```bash
 nix build .#pulsar-client-hs
 nix build .#pulsar-admin
-nix build .#pulsar-client-hs-examples
 nix build .#pulsar-client-cpp
 ```
 
