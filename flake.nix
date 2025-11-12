@@ -15,31 +15,42 @@
     flake-utils.lib.eachDefaultSystem (
       system:
       let
+        haskellOverride = final: prev: self: super: {
+          pulsar-client-hs = super.callCabal2nix "pulsar-client-hs" ./pulsar-client-hs {
+            pulsar = final.libpulsar;
+          };
+          pulsar-admin = prev.haskell.lib.dontCheck (super.callCabal2nix "pulsar-admin" ./pulsar-admin { });
+        };
+
         packageOverlay = final: prev: {
-          # Native C++ library. The original pulsar package is marked as
-          # insecure, so we simply override it.
-          pulsar-client-cpp = prev.libpulsar.overrideAttrs (old: {
-            # N.B. patches need to be tracked by Git. Otherwise, Nix doesn't
-            # pick them up!
+          libpulsar = prev.libpulsar.overrideAttrs (old: {
             patches = (old.patches or [ ]) ++ [
               ./nix/add-stdbool-table-view.patch
             ];
           });
+
+          haskellPackages = prev.haskellPackages.override { overrides = haskellOverride final prev; };
+
+          # For top-level haskell.packages.${compiler}, use packageOverrides
+          haskell = prev.haskell // {
+            packages = prev.haskell.packages //
+              builtins.listToAttrs (
+                map
+                  (compilerName: {
+                    name = compilerName;
+                    value = prev.haskell.packages.${compilerName}.override {
+                      overrides = haskellOverride final prev;
+                    };
+                  })
+                  (builtins.attrNames prev.haskell.packages)
+              );
+          };
         };
 
         pkgs = nixpkgs.legacyPackages.${system}.extend packageOverlay;
 
         compiler = "ghc98";
-
-        haskellPackages = pkgs.haskell.packages.${compiler}.override {
-          overrides = self: super: {
-            pulsar-client-hs = self.callCabal2nix "pulsar-client-hs" ./pulsar-client-hs {
-              pulsar = pkgs.pulsar-client-cpp;
-            };
-
-            pulsar-admin = pkgs.haskell.lib.dontCheck (self.callCabal2nix "pulsar-admin" ./pulsar-admin { });
-         };
-        };
+        haskellPackages = pkgs.haskell.packages.${compiler};
 
         localHaskellPackages = {
           pulsar-client-hs = haskellPackages.pulsar-client-hs;
@@ -86,10 +97,11 @@
       rec {
         packages = {
           default = pkgs.linkFarmFromDrvs "all-pulsar-hs" (builtins.attrValues localHaskellPackages);
-          pulsar-client-cpp = pkgs.pulsar-client-cpp;
+          libpulsar = pkgs.libpulsar;
         }
         // mkPackageAttrs haskellPackageNames;
 
+        # overlays.default =
 
         devShells = {
           default = haskellPackages.shellFor {
