@@ -42,3 +42,12 @@ Or use direnv for automatic environment loading:
 ```bash
 direnv allow
 ```
+
+## Usage
+
+### Caveats
+
+The `pulsar-client-hs` library only works with the threaded GHC RTS (GHC flag
+`-threaded`.) Due to asynchronous callback calls (invoking the logger), using a
+non-threaded RTS can lead to random crashes. See
+https://gitlab.haskell.org/ghc/ghc/-/issues/26561 for details.
