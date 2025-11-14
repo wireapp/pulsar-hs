@@ -66,6 +66,8 @@ library
         Pulsar.Client.Internal.Wrapper.ReaderConfiguration
         Pulsar.Client.Internal.Wrapper.Reader
         Pulsar.Client.Internal.Wrapper.Result
+        -- Helpers, Utils, ...
+        Pulsar.RtsCheck
     other-modules:
         Pulsar.Client.Internal.Wrapper.Utils
         Paths_pulsar_client_hs
