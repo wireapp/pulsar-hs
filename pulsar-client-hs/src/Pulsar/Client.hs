@@ -112,9 +112,13 @@ import Pulsar.Client.Internal.Wrapper.Reader
 import Pulsar.Client.Internal.Wrapper.ReaderConfiguration
 import Pulsar.Client.Internal.Wrapper.Result
 import Pulsar.Client.Internal.Wrapper.Utils
+import Pulsar.RtsCheck
 
 withClient :: MonadUnliftIO m => ClientConfiguration -> String -> ReaderT Client m a -> m a
 withClient configuration serviceUrl f = runResourceT $ do
+  -- Ensure we're running in a -threaded RTS. See `README.md` for details.
+  liftIO checkThreadedRTS
+
   ptrConfig <- mkClientConfiguration configuration
   serviceUrl' <- toCString serviceUrl
   client <- liftIO $ c'pulsar_client_create serviceUrl' ptrConfig
