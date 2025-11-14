@@ -23,7 +23,6 @@
             # pick them up!
             patches = (old.patches or [ ]) ++ [
               ./nix/add-stdbool-table-view.patch
-              ./nix/ffi-race-condition.patch
             ];
           });
         };
