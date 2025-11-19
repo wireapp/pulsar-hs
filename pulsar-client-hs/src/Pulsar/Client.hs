@@ -60,6 +60,8 @@ module Pulsar.Client
     messageIdEarliest,
     messageIdLatest,
     messageIdShow,
+    withDeserializedMessageId,
+    messageIdSerialize,
 
     -- * Message router
     topicMetadataPartitions,
