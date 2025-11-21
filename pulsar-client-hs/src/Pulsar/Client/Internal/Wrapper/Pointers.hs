@@ -11,6 +11,7 @@ module Pulsar.Client.Internal.Wrapper.Pointers
     FetchedMessageId (..),
     BuiltMessage (..),
     FetchedMessage (..),
+    FetchedMessageLink (..),
   )
 where
 
