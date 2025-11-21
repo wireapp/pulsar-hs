@@ -31,6 +31,7 @@ data Result
   | InvalidMessage
   | ConsumerNotInitialized
   | ProducerNotInitialized
+  | ProducerBusy
   | TooManyLookupRequestException
   | InvalidTopicName
   | InvalidUrl
@@ -46,6 +47,15 @@ data Result
   | UnsupportedVersionError
   | TopicTerminated
   | CryptoError
+  | CumulativeAcknowledgementNotAllowedError
+  | TransactionCoordinatorNotFoundError
+  | InvalidTxnStatusError
+  | NotAllowedError
+  | TransactionConflict
+  | TransactionNotFound
+  | ProducerFenced
+  | MemoryBufferIsFull
+  | Interrupted
   deriving (Eq, Ord, Show)
 
 renderResult :: RawResult -> Maybe Result
@@ -69,6 +79,7 @@ renderResult (RawResult x)
   | x == c'pulsar_result_InvalidMessage = Just InvalidMessage
   | x == c'pulsar_result_ConsumerNotInitialized = Just ConsumerNotInitialized
   | x == c'pulsar_result_ProducerNotInitialized = Just ProducerNotInitialized
+  | x == c'pulsar_result_ProducerBusy = Just ProducerBusy
   | x == c'pulsar_result_TooManyLookupRequestException = Just TooManyLookupRequestException
   | x == c'pulsar_result_InvalidTopicName = Just InvalidTopicName
   | x == c'pulsar_result_InvalidUrl = Just InvalidUrl
@@ -84,6 +95,15 @@ renderResult (RawResult x)
   | x == c'pulsar_result_UnsupportedVersionError = Just UnsupportedVersionError
   | x == c'pulsar_result_TopicTerminated = Just TopicTerminated
   | x == c'pulsar_result_CryptoError = Just CryptoError
+  | x == c'pulsar_result_CumulativeAcknowledgementNotAllowedError = Just CumulativeAcknowledgementNotAllowedError
+  | x == c'pulsar_result_TransactionCoordinatorNotFoundError = Just TransactionCoordinatorNotFoundError
+  | x == c'pulsar_result_InvalidTxnStatusError = Just InvalidTxnStatusError
+  | x == c'pulsar_result_NotAllowedError = Just NotAllowedError
+  | x == c'pulsar_result_TransactionConflict = Just TransactionConflict
+  | x == c'pulsar_result_TransactionNotFound = Just TransactionNotFound
+  | x == c'pulsar_result_ProducerFenced = Just ProducerFenced
+  | x == c'pulsar_result_MemoryBufferIsFull = Just MemoryBufferIsFull
+  | x == c'pulsar_result_Interrupted = Just Interrupted
   | otherwise = Nothing
 
 isOk :: RawResult -> Bool
