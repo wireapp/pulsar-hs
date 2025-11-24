@@ -11,6 +11,7 @@ module Pulsar.Client.Internal.Wrapper.Consumer
     acknowledgeNegativeMessageId,
     redeliverUnacknowledgeMessages,
     seekConsumer,
+    withConsumerNoUnsubscribe'
   )
 where
 
@@ -27,6 +28,14 @@ withConsumer' :: MonadIO m => Consumer -> ReaderT Consumer m a -> m a
 withConsumer' consumer@(Consumer ptrConsumer) f = do
   result <- runReaderT f consumer
   liftIO $ c'pulsar_consumer_unsubscribe ptrConsumer
+  liftIO $ c'pulsar_consumer_close ptrConsumer
+  liftIO $ c'pulsar_consumer_free ptrConsumer
+  return result
+
+-- TODO: This can be much improved regarding code duplication. However, we want to try the idea for now.
+withConsumerNoUnsubscribe' :: MonadIO m => Consumer -> ReaderT Consumer m a -> m a
+withConsumerNoUnsubscribe' consumer@(Consumer ptrConsumer) f = do
+  result <- runReaderT f consumer
   liftIO $ c'pulsar_consumer_close ptrConsumer
   liftIO $ c'pulsar_consumer_free ptrConsumer
   return result

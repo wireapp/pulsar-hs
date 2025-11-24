@@ -36,6 +36,7 @@ module Pulsar.Client
     acknowledgeNegativeMessageId,
     redeliverUnacknowledgeMessages,
     seekConsumer,
+    withConsumerNoUnsubscribe,
 
     -- * Message
     BuiltMessage (..),
@@ -156,6 +157,26 @@ withConsumer configuration subscriptionName topicsSelection onFailed f = do
       withPtrPtr $ \ptrConsumer -> do
         result <- liftIO $ subscribe ptrConsumer
         peekOn (isOk $ RawResult result) ptrConsumer (onFailed $ RawResult result) $ flip (withConsumer' . Consumer) f
+
+-- TODO: This can be much improved regarding code duplication. However, we want to try the idea for now.
+withConsumerNoUnsubscribe :: MonadUnliftIO m => ConsumerConfiguration -> String -> TopicsSelection -> (RawResult -> m a) -> ReaderT Consumer m a -> ReaderT Client m a
+withConsumerNoUnsubscribe configuration subscriptionName topicsSelection onFailed f = do
+  Client client <- ask
+  lift $
+    runResourceT $ do
+      subscriptionName' <- toCString subscriptionName
+      ptrConfig <- mkConsumerConfiguration configuration
+      subscribe <-
+        case topicsSelection of
+          Topic (TopicName topic) -> toCString topic <&> \topic' -> c'pulsar_client_subscribe client topic' subscriptionName' ptrConfig
+          Topics topics -> do
+            topics' <- mapM (toCString . topicName) topics
+            ptrTopics <- new (newArray topics') free
+            return $ c'pulsar_client_subscribe_multi_topics client ptrTopics (fromIntegral $ length topics) subscriptionName' ptrConfig
+          TopicsPattern topicsPattern -> toCString topicsPattern <&> \topicsPattern' -> c'pulsar_client_subscribe_pattern client topicsPattern' subscriptionName' ptrConfig
+      withPtrPtr $ \ptrConsumer -> do
+        result <- liftIO $ subscribe ptrConsumer
+        peekOn (isOk $ RawResult result) ptrConsumer (onFailed $ RawResult result) $ flip (withConsumerNoUnsubscribe' . Consumer) f
 
 withProducer :: MonadUnliftIO m => ProducerConfiguration -> TopicName -> (RawResult -> m a) -> ReaderT Producer m a -> ReaderT Client m a
 withProducer configuration (TopicName topic) onFailed f = do
