@@ -33,6 +33,7 @@ library
     exposed-modules:
         Pulsar.Client
         Pulsar.Client.Unsafe
+        Pulsar.Subscription
         -- Foreign (Generated)
         Pulsar.Client.Internal.Foreign.Authentication
         Pulsar.Client.Internal.Foreign.ClientConfiguration
